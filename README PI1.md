@@ -8,30 +8,32 @@ La startup provee servicios de agregación de plataformas de streaming y necesit
 El proyecto sigue un enfoque iterativo basado en el ciclo de vida de los proyectos de Machine Learning. El objetivo es proporcionar un MVP en una semana. Para ello, se plantea la siguiente propuesta de trabajo:
 
 ## Transformaciones de datos
-Se deben realizar las siguientes transformaciones de datos:
+Se deben realizar las siguientes transformaciones de datos:  
 
-Generar campo id: Cada id se compondrá de la primera letra del nombre de la plataforma, seguido del show_id ya presente en los datasets (ejemplo para títulos de Amazon = as123)
+Generar campo id: Cada id se compondrá de la primera letra del nombre de la plataforma, seguido del show_id ya presente en los datasets (ejemplo para títulos de Amazon = as123). 
 Los valores nulos del campo rating deberán reemplazarse por el string “G” (corresponde al maturity rating: “general for all audiences”
-De haber fechas, deberán tener el formato AAAA-mm-dd
-Los campos de texto deberán estar en minúsculas, sin excepciones
-El campo duration debe convertirse en dos campos: duration_int y duration_type. El primero será un integer y el segundo un string indicando la unidad de medición de duración: min (minutos) o season (temporadas)
-Desarrollo de la API
-Se propone el uso del framework FastAPI para disponibilizar los datos de la empresa. Se han definido las siguientes consultas:
+De haber fechas, deberán tener el formato AAAA-mm-dd. 
+Los campos de texto deberán estar en minúsculas, sin excepciones. 
+El campo duration debe convertirse en dos campos: duration_int y duration_type. El primero será un integer y el segundo un string indicando la unidad de medición de duración: min (minutos) o season (temporadas). 
 
-Película con mayor duración con filtros opcionales de AÑO, PLATAFORMA Y TIPO DE DURACIÓN. (la función debe llamarse get_max_duration(year, platform, duration_type))
+## Desarrollo de la API:  
+Se propone el uso del framework FastAPI para disponibilizar los datos de la empresa. Se han definido las siguientes consultas:  
+
+Película con mayor duración con filtros opcionales de AÑO, PLATAFORMA Y TIPO DE DURACIÓN. (la función debe llamarse get_max_duration(year, platform, duration_type)). 
 Cantidad de películas por plataforma con un puntaje mayor a XX en determinado año (la función debe llamarse get_score_count(platform, scored, year))
-Cantidad de películas por plataforma con filtro de PLATAFORMA. (La función debe llamarse get_count_platform(platform))
-Actor que más se repite según plataforma y año. (La función debe llamarse get_actor(platform, year))
-Deployment
-Se ha optado por Deta para hacer el deployment de la aplicación, debido a su facilidad de uso y el hecho de que no necesita dockerización.
+Cantidad de películas por plataforma con filtro de PLATAFORMA. (La función debe llamarse get_count_platform(platform)). 
+Actor que más se repite según plataforma y año. (La función debe llamarse get_actor(platform, year)). 
 
-## Análisis exploratorio de datos
+## Deployment:  
+Se ha optado por Deta para hacer el deployment de la aplicación, debido a su facilidad de uso y el hecho de que no necesita dockerización.  
+
+## Análisis exploratorio de datos:   
 Se debe realizar un análisis exploratorio de datos para investigar las relaciones entre las variables de los datasets, detectar outliers o anomalías y explorar patrones interesantes. Se pueden usar herramientas como pandas profiling, sweetviz, autoviz, entre otros.
 
-## Sistema de recomendación
+## Sistema de recomendación:  
 Una vez que los datos están limpios y disponibles a través de la API, y se ha realizado el análisis exploratorio, se debe entrenar un modelo de machine learning para armar un sistema de recomendación de películas para usuarios. El modelo debe ser capaz de recomendar películas a un usuario dado su ID y una película. Si es posible, se debe desplegar el modelo para tener una interfaz gráfica.
 
-## Estructura del repositorio
+## Estructura del repositorio:  
 En el repositorio se encontrarán los siguientes archivos y carpetas:
 
 README.md: Este archivo que contiene la descripción del proyecto, sus objetivos, y los pasos necesarios para reproducirlo.
