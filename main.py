@@ -10,9 +10,9 @@ app = FastAPI()
 #     platform : Optional[str]
 #     duration_type : Optional[str]
 
-# @app.get('/')
-# def index():
-#     return {'Hola' : 'Mundo'}
+@app.get('/')
+def index():
+    return {'Hola' : 'Mundo'}
 
 @ app.get('/max_duration/{year}/{platform}/{duration_type}')
 def get_max_duration(year:int,platform:str,duration_type:str): 
