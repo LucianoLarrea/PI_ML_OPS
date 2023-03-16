@@ -3,7 +3,8 @@ from fastapi import FastAPI
 # from pydantic import BaseModel
 # from typing import Optional
 
-app = FastAPI()
+app = FastAPI(title='PI1',
+            description='DTS-08')
 
 # class Libro(BaseModel):
 #     year : Optional[int]
@@ -11,11 +12,11 @@ app = FastAPI()
 #     duration_type : Optional[str]
 
 @app.get('/')
-def index():
+async def index():
     return {'Hola' : 'Mundo'}
 
-@ app.get('/max_duration/{year}/{platform}/{duration_type}')
-def get_max_duration(year:int,platform:str,duration_type:str): 
+@app.get('/max_duration/{year}/{platform}/{duration_type}')
+async def get_max_duration(year:int,platform:str,duration_type:str): 
     All = pd.read_csv("data/all.csv")
     # Aplicar filtros opcionales
     if year is not None:
