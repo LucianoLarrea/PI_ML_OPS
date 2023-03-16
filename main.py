@@ -69,7 +69,7 @@ async def get_listedin(genero:str):
     return max(cant_apariciones), plataforma[cant_apariciones.index(max(cant_apariciones))]
 
 @app.get('/get_actor/({plataforma},{anio})')
-def get_actor(platform:str, anio:int):
+async def get_actor(platform:str, anio:int):
     result = df[(df['platform']==platform) & (df['release_year']==anio)]
     #se empieza realizando una iteración dentro de la columna cast, donde están los actores. Si lo que encuentra es diferente a "sin dato",
     #es decir que encontró información, va a reemplazar la coma y el espacio, por solo la coma. Para realizar luego una separación entre
