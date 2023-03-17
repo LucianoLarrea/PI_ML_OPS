@@ -10,8 +10,6 @@ app = FastAPI(title='PI1',
 async def index():
     return {'Hola' : 'Mundo'}
 
-
-
 @app.get('/max_duration/{year}/{platform}/{duration_type}')
 async def get_max_duration(year:int, platform:str, duration_type:str): 
     All = pd.read_csv("data/all.csv")
