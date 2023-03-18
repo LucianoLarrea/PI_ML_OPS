@@ -25,7 +25,7 @@ async def get_max_duration(year:int, platform:str, duration_type:str):
 @app.get('/score_count/{platform}/{scored}/{year}')
 async def get_score_count(platform:str, scored:int, year:int):
     All = pd.read_csv("data/all.csv")
-    Score = pd.read_csv('ignore/score.csv')
+    Score = pd.read_parquet('data/score.parquet')
     result = Score[(Score['platform'] == platform) & (Score['score'] >= scored) & (All['release_year'] == year)].shape[0]
     return result
 
