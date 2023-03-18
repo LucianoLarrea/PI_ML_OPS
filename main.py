@@ -11,28 +11,47 @@ app = FastAPI()
 async def index():
     return {'Hola' : 'Mundo'}
 
+# Fucion Query 1
 @app.get('/max_duration/{year}/{platform}/{duration_type}')
 async def get_max_duration(year:int, platform:str, duration_type:str): 
     All = pd.read_csv("data/all.csv")
     Q1 = All[(All['platform'] == platform) & (All['release_year'] == year) & (All['duration_type'] == duration_type)].sort_values(by = 'duration_int' , ascending=False)
     max_duration_title = Q1['title'].values[0]
     return max_duration_title
-# # get_max_duration(year, platform, duration_type)
 
-# async def main():
-#     max_duration_title = await get_max_duration(2014, 'amazon', 'min')
-#     print(max_duration_title)
+# get_max_duration(year, platform, duration_type)
+    
+# Funcion Query 2
+@app.get('/score_count/{platform}/{scored}/{year}')
+async def get_score_count(platform:str, scored:int, year:int):
+    All = pd.read_csv("data/all.csv")
+    Score = pd.read_csv('ignore/score.csv')
+    result = Score[(Score['platform'] == platform) & (Score['score'] >= scored) & (All['release_year'] == year)].shape[0]
+    return result
 
-# asyncio.run(main())
+# Fucnion Query 3
+@app.get('/count_platform/{platform}')
+async def get_count_platform(platform:str):
+    All = pd.read_csv("data/all.csv")
+    All = All.loc[All['platform'] == platform]
+    movies_platform = len(All.index)
+    return movies_platform
 
-    # # Encontrar la película con mayor duración
-    # max_duration = All['duration_int'].max()
-    # max_duration_movie = All.loc[All['duration_int'] == max_duration, 'title']
-    # if len(max_duration_movie) > 0:
-    #     max_duration_movie = max_duration_movie.iloc[0]
-    # else:
-    #     max_duration_movie = "No movies found with maximum duration"
+# get_count_platform('amazon')
 
-    # # Devolver el resultado
-    # # print(max_duration_movie)
-    # return max_duration_movie
+# Funcion Query 4
+@app.get('/get_actor/{platform}/{year}')
+async def get_actor(platform:str, year:int):
+    All = pd.read_csv("data/all.csv")
+    Q4_1 = All[(All['platform'] == platform) & (All['release_year'] == year)]   # Filtra por plataforma y anio
+    if len(Q4_1) > 0: 
+        Q4_2 = Q4_1.assign(actor=Q4_1.cast.str.split(',')).explode('cast')          # Divide 'cast', crea y cuenta una fila por cada elemento.
+        Q4_3 = Q4_2.cast.value_counts()  
+        max_actor = Q4_3.index[0]                                                   # Obtiene el actor con más apariciones y número de apariciones
+        max_count = int(Q4_3.iloc[0])
+        Q4 = dict({'actor': max_actor, 'appearances': max_count})
+        return Q4
+    else:
+        return ("No actor found with those parameters.")
+    
+# get_actor('disney', 2020)
