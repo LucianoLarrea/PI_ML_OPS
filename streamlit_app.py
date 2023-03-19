@@ -64,30 +64,24 @@ if st.button('Consultar'):
     st.write(f"El actor con más apariciones en la plataforma {platform} en el año {year} es {result['actor']} con {result['appearances']} apariciones.")
 
 
+# Crear la aplicación de Streamlit
+def app():
+    st.title('Consultas en el catálogo de películas')
+    menu = ['Inicio', 'Máxima duración', 'Puntuación', 'Cantidad de películas', 'Actores']
+    choice = st.sidebar.selectbox('Seleccione una consulta', menu)
 
+    if choice == 'Inicio':
+        st.write('Bienvenido a la aplicación de consultas en el catálogo de películas')
 
-
-
-
-
-# # Crear la aplicación de Streamlit
-# def app():
-#     st.title('Consultas en el catálogo de películas')
-#     menu = ['Inicio', 'Máxima duración', 'Puntuación', 'Cantidad de películas', 'Actores']
-#     choice = st.sidebar.selectbox('Seleccione una consulta', menu)
-
-#     if choice == 'Inicio':
-#         st.write('Bienvenido a la aplicación de consultas en el catálogo de películas')
-
-#     elif choice == 'Máxima duración':
-#         st.subheader('Película con mayor duración')
-#         year = st.number_input('Ingrese el año', min_value=1900, max_value=2025)
-#         platform = st.selectbox('Seleccione la plataforma', All['platform'].unique())
-#         duration_type = st.selectbox('Seleccione el tipo de duración', All['duration_type'].unique())
-#         if st.button('Buscar'):
-#             max_duration_title = get_max_duration(year, platform, duration_type)
-#             if max_duration_title:
-#                 st.write(f"La película con mayor duración en {year} en la plataforma {platform} y con duración tipo {duration_type} es {max_duration_title}")
-#             else:
-#                 st.write(f"No se encontró ninguna película con los criterios de búsqueda especificados.")
+    elif choice == 'Máxima duración':
+        st.subheader('Película con mayor duración')
+        year = st.number_input('Ingrese el año', min_value=1900, max_value=2025)
+        platform = st.selectbox('Seleccione la plataforma', All['platform'].unique())
+        duration_type = st.selectbox('Seleccione el tipo de duración', All['duration_type'].unique())
+        if st.button('Buscar'):
+            max_duration_title = get_max_duration(year, platform, duration_type)
+            if max_duration_title:
+                st.write(f"La película con mayor duración en {year} en la plataforma {platform} y con duración tipo {duration_type} es {max_duration_title}")
+            else:
+                st.write(f"No se encontró ninguna película con los criterios de búsqueda especificados.")
 
