@@ -52,7 +52,7 @@ plataforma = ['amazon','disney','hulu','netflix']
 if query == 'Duración máxima':
     st.subheader('Duración máxima por año y plataforma')
     year = st.number_input('Año', min_value=2000, max_value=2023, value=2022, step=1)
-    platform = st.sidebar.selectbox('Seleccione una plataforma', plataforma)
+    platform = st.selectbox('Seleccione una plataforma', plataforma)
     duration_type = st.selectbox('Tipo de duración', ['min', 'season'])
     if st.button('Consultar'):
         result = get_max_duration(year, platform, duration_type)
@@ -64,7 +64,7 @@ if query == 'Duración máxima':
 # Consulta 2: Títulos por puntuación
 if query == 'Títulos por puntuación':
     st.subheader('Títulos con una puntuación dada en una plataforma y año determinados')
-    platform = st.sidebar.selectbox('Seleccione una plataforma', plataforma)
+    platform = st.selectbox('Seleccione una plataforma', plataforma)
     scored = st.number_input('Puntuación mínima', min_value=1, max_value=5, value=3, step=0.1)
     year = st.number_input('Año', min_value=2000, max_value=2023, value=2020, step=1)
     if st.button('Consultar'):
@@ -74,15 +74,17 @@ if query == 'Títulos por puntuación':
 # Consulta 3: Títulos por plataforma
 if query == 'Títulos por plataforma':
     st.subheader('Número de títulos en una plataforma dada')
-    platform = st.sidebar.selectbox('Seleccione una plataforma', plataforma)
+    platform = st.selectbox('Seleccione una plataforma', plataforma)
     if st.button('Consultar'):
         result = get_count_platform(platform)
         st.write(f'Hay {result} títulos en {platform}.')
+    else: st.write(result)  
+else: st.write(result)  
 
 # Consulta 4: Actor con más apariciones
 if query == 'Actor con más apariciones':
     st.subheader('Actor con más apariciones en una plataforma y año determinados')
-    platform = st.sidebar.selectbox('Seleccione una plataforma', plataforma)
+    platform = st.selectbox('Seleccione una plataforma', plataforma)
     year = st.number_input('Año', min_value=2000, max_value=2022, value=2020, step=1)
     if st.button('Consultar'):
         result = get_actor(platform, year)
@@ -90,6 +92,8 @@ if query == 'Actor con más apariciones':
             st.write(result)
         else:
             st.write(f'El actor con más apariciones en {platform} en {year} es {result["actor"]}, con {result["appearances"]} apariciones.')
+    else: st.write(result)  
+else: st.write(result)        
 
     
 # # Aplicación de Streamlit: # Query 3: Titulos por plataforma
