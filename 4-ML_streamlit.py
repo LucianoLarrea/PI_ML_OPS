@@ -1,11 +1,7 @@
 import streamlit as st
-import numpy as np
 import pandas  as pd
-import seaborn as sns
-sns.set()
 from surprise import Dataset, Reader, SVD
 from surprise.model_selection import train_test_split
-from surprise import accuracy
 # Leer datos
 df1 = pd.read_parquet(('data/merge.parquet'))
 df_title = pd.read_csv('data/df_title.csv')
