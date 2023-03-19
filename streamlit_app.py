@@ -46,12 +46,13 @@ st.title('Consultas de películas y series')
 # Opciones de consulta
 options = ['Duración máxima', 'Títulos por puntuación', 'Títulos por plataforma', 'Actor con más apariciones']
 query = st.sidebar.selectbox('Seleccione una consulta', options)
+plataforma = ['amazon','disney','hulu','netflix']
 
 # Consulta 1: Duración máxima
 if query == 'Duración máxima':
     st.subheader('Duración máxima por año y plataforma')
     year = st.number_input('Año', min_value=2000, max_value=2023, value=2022, step=1)
-    platform = st.text_input('Plataforma')
+    platform = plataforma
     duration_type = st.selectbox('Tipo de duración', ['min', 'season'])
     if st.button('Consultar'):
         result = get_max_duration(year, platform, duration_type)
@@ -63,7 +64,7 @@ if query == 'Duración máxima':
 # Consulta 2: Títulos por puntuación
 if query == 'Títulos por puntuación':
     st.subheader('Títulos con una puntuación dada en una plataforma y año determinados')
-    platform = st.text_input('Plataforma')
+    platform = plataforma
     scored = st.number_input('Puntuación mínima', min_value=1, max_value=5, value=3, step=0.1)
     year = st.number_input('Año', min_value=2000, max_value=2023, value=2020, step=1)
     if st.button('Consultar'):
@@ -81,7 +82,7 @@ if query == 'Títulos por plataforma':
 # Consulta 4: Actor con más apariciones
 if query == 'Actor con más apariciones':
     st.subheader('Actor con más apariciones en una plataforma y año determinados')
-    platform = st.text_input('Plataforma')
+    platform = plataforma
     year = st.number_input('Año', min_value=2000, max_value=2022, value=2020, step=1)
     if st.button('Consultar'):
         result = get_actor(platform, year)
