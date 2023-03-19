@@ -14,8 +14,11 @@ Score = pd.read_parquet('data/score.parquet')
 # Query 1: Duracion maxima
 def get_max_duration(year:int, platform:str, duration_type:str): 
     Q1 = All[(All['platform'] == platform) & (All['release_year'] == year) & (All['duration_type'] == duration_type)].sort_values(by = 'duration_int' , ascending=False)
-    max_duration_title = Q1['title'].values[0]
-    return max_duration_title
+    if len(Q1) > 0:
+        max_duration_title = Q1['title'].values[0]
+        return max_duration_title
+    else: 
+        return ("Not titles found with those parameters.")
 # Query 2: Titulos por puntuacion
 def get_score_count(platform:str, scored:int, year:int):
     result = Score[(Score['platform'] == platform) & (Score['score'] >= scored) & (All['release_year'] == year)].shape[0]
@@ -36,7 +39,7 @@ def get_actor(platform:str, year:int):
         Q4 = dict({'actor': max_actor, 'appearances': max_count})
         return Q4
     else:
-        return ("No actor found with those parameters.")
+        return ({})
     
 # from queries import *
 
@@ -52,19 +55,19 @@ plataforma = ['amazon','disney','hulu','netflix']
 if query == 'Duración máxima':
     st.subheader('Duración máxima por año y plataforma')
     year = st.number_input('Año', min_value=2000, max_value=2023, value=2022, step=1)
-    platform = st.selectbox('Seleccione una plataforma', plataforma)
+    platform = st.selectbox('Seleccione una plataforma', ['amazon','disney','hulu','netflix'])
     duration_type = st.selectbox('Tipo de duración', ['min', 'season'])
     if st.button('Consultar'):
         result = get_max_duration(year, platform, duration_type)
         if isinstance(result, str):
-            st.write(f'La duración máxima de {duration_type.lower()}s en {year} en {platform} es {result}.')
+            st.write(f'La duración máxima en {duration_type.lower()}s en {year} en {platform} es {result}.')
         else:
             st.write(result)
 
 # Consulta 2: Títulos por puntuación
 if query == 'Títulos por puntuación':
     st.subheader('Títulos con una puntuación dada en una plataforma y año determinados')
-    platform = st.selectbox('Seleccione una plataforma', plataforma)
+    platform = st.selectbox('Seleccione una plataforma', ['amazon','disney','hulu','netflix'])
     scored = st.number_input('Puntuación mínima', min_value=1, max_value=5, value=3, step=0.1)
     year = st.number_input('Año', min_value=2000, max_value=2023, value=2020, step=1)
     if st.button('Consultar'):
@@ -74,7 +77,7 @@ if query == 'Títulos por puntuación':
 # Consulta 3: Títulos por plataforma
 if query == 'Títulos por plataforma':
     st.subheader('Número de títulos en una plataforma dada')
-    platform = st.selectbox('Seleccione una plataforma', plataforma)
+    platform = st.selectbox('Seleccione una plataforma', ['amazon','disney','hulu','netflix'])
     if st.button('Consultar'):
         result = get_count_platform(platform)
         st.write(f'Hay {result} títulos en {platform}.')
@@ -84,7 +87,7 @@ else: st.write(result)
 # Consulta 4: Actor con más apariciones
 if query == 'Actor con más apariciones':
     st.subheader('Actor con más apariciones en una plataforma y año determinados')
-    platform = st.selectbox('Seleccione una plataforma', plataforma)
+    platform = st.selectbox('Seleccione una plataforma', ['amazon','disney','hulu','netflix'])
     year = st.number_input('Año', min_value=2000, max_value=2022, value=2020, step=1)
     if st.button('Consultar'):
         result = get_actor(platform, year)
@@ -120,24 +123,24 @@ else: st.write(result)
 #     st.write(f"El actor con más apariciones en la plataforma {platform} en el año {year} es {result['actor']} con {result['appearances']} apariciones.")
 
 
-# Crear la aplicación de Streamlit
-def app():
-    st.title('Consultas en el catálogo de películas')
-    menu = ['Inicio', 'Máxima duración', 'Puntuación', 'Cantidad de películas', 'Actores']
-    choice = st.sidebar.selectbox('Seleccione una consulta', menu)
+# # Crear la aplicación de Streamlit
+# def app():
+#     st.title('Consultas en el catálogo de películas')
+#     menu = ['Inicio', 'Máxima duración', 'Puntuación', 'Cantidad de películas', 'Actores']
+#     choice = st.sidebar.selectbox('Seleccione una consulta', menu)
 
-    if choice == 'Inicio':
-        st.write('Bienvenido a la aplicación de consultas en el catálogo de películas')
+#     if choice == 'Inicio':
+#         st.write('Bienvenido a la aplicación de consultas en el catálogo de películas')
 
-    elif choice == 'Máxima duración':
-        st.subheader('Película con mayor duración')
-        year = st.number_input('Ingrese el año', min_value=1900, max_value=2025)
-        platform = st.selectbox('Seleccione la plataforma', All['platform'].unique())
-        duration_type = st.selectbox('Seleccione el tipo de duración', All['duration_type'].unique())
-        if st.button('Buscar'):
-            max_duration_title = get_max_duration(year, platform, duration_type)
-            if max_duration_title:
-                st.write(f"La película con mayor duración en {year} en la plataforma {platform} y con duración tipo {duration_type} es {max_duration_title}")
-            else:
-                st.write(f"No se encontró ninguna película con los criterios de búsqueda especificados.")
+#     elif choice == 'Máxima duración':
+#         st.subheader('Película con mayor duración')
+#         year = st.number_input('Ingrese el año', min_value=1900, max_value=2025)
+#         platform = st.selectbox('Seleccione la plataforma', All['platform'].unique())
+#         duration_type = st.selectbox('Seleccione el tipo de duración', All['duration_type'].unique())
+#         if st.button('Buscar'):
+#             max_duration_title = get_max_duration(year, platform, duration_type)
+#             if max_duration_title:
+#                 st.write(f"La película con mayor duración en {year} en la plataforma {platform} y con duración tipo {duration_type} es {max_duration_title}")
+#             else:
+#                 st.write(f"No se encontró ninguna película con los criterios de búsqueda especificados.")
 
