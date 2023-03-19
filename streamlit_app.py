@@ -20,8 +20,11 @@ def get_max_duration(year:int, platform:str, duration_type:str):
         return ("Not titles found with those parameters.")
 # Query 2: Titulos por puntuacion
 def get_score_count(platform:str, scored:int, year:int):
-    result = Score[(Score['platform'] == platform) & (Score['score'] >= scored) & (All['release_year'] == year)].shape[0]
-    return result
+    Q2 = Score[(Score['platform'] == platform) & (Score['score'] >= scored) & (All['release_year'] == year)].shape[0]
+    if len(Q2) > 0: 
+        return Q2
+    else:
+        return (0)
 # Query 3: Titulos por plataforma
 def get_count_platform(platform:str):
     All_platform = All.loc[All['platform'] == platform]
@@ -50,7 +53,7 @@ options = ['Inicio','Duración máxima', 'Títulos por puntuación', 'Títulos p
 query = st.sidebar.selectbox('Seleccione una consulta', options)
 
 if query == 'Inicio':
-         st.write('Bienvenido a la aplicación de consultas en el catálogo de películas')
+         st.write('Bienvenido a la aplicación de consultas en el catálogo de servicios de streaming')
 
 # Consulta 1: Duración máxima
 if query == 'Duración máxima':
@@ -61,7 +64,7 @@ if query == 'Duración máxima':
     if st.button('Consultar'):
         result = get_max_duration(year, platform, duration_type)
         if isinstance(result, str):
-            st.write(f'La duración máxima en {duration_type.lower()}s en {year} en {platform} es {result}.')
+            st.write(f'La duración máxima en {duration_type.lower()}s en {year} en {platform} es: {result}.')
         else:
             st.write(result)
 
