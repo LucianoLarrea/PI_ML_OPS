@@ -72,7 +72,7 @@ if query == 'Duración máxima':
 if query == 'Títulos por puntuación':
     st.subheader('Títulos con una puntuación dada en una plataforma y año determinados')
     platform = st.selectbox('Seleccione una plataforma', ['amazon','disney','hulu','netflix'])
-    scored = st.number_input('Puntuación mínima', min_value=1, max_value=5, value=3, step=0.1)
+    scored = st.number_input('Puntuación mínima', min_value=1.0, max_value=5.0, value=3.5, step=0.1)
     year = st.number_input('Año', min_value=2000, max_value=2023, value=2020, step=1)
     if st.button('Consultar'):
         result = get_score_count(platform, scored, year)
