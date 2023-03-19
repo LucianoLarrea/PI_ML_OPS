@@ -21,10 +21,10 @@ def get_max_duration(year:int, platform:str, duration_type:str):
 # Query 2: Titulos por puntuacion
 def get_score_count(platform:str, scored:int, year:int):
     Q2 = Score[(Score['platform'] == platform) & (Score['score'] >= scored) & (All['release_year'] == year)].shape[0]
-    if len(Q2) > 0: 
-        return Q2
-    else:
-        return (0)
+    # if len(Q2) > 0: 
+    return Q2
+    # else:
+    #     return (0)
 # Query 3: Titulos por plataforma
 def get_count_platform(platform:str):
     All_platform = All.loc[All['platform'] == platform]
