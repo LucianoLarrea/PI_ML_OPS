@@ -15,10 +15,10 @@ model = SVD()
 model.fit(trainset)
 
 # Crear interfaz de usuario
-st.title('Sistema de recomendación de titulos de streaming')
-st.write('Ingrese el ID del usuario y el puntaje mínimo para las películas recomendadas.')
+st.title('Sistema de recomendación de títulos de streaming')
+st.write('Ingrese el ID del usuario y el puntaje mínimo para los títulos recomendados.')
 usuario_id = st.number_input('ID del usuario', min_value=1)
-puntaje_minimo = st.slider('Puntaje mínimo para las películas recomendadas', 1.0, 5.0, 3.5, 0.1)
+puntaje_minimo = st.slider('Puntaje mínimo para los títulos recomendados', 1.0, 5.0, 3.5, 0.1)
 
 # Realizar recomendación
 usuario_vistas = df1[df1['userId'] == usuario_id] # Filtro por peliculas que el usuario califico
@@ -27,10 +27,10 @@ recomendaciones_usuario.drop(usuario_vistas.movieId, inplace=True, errors='ignor
 recomendaciones_usuario = recomendaciones_usuario.reset_index()
 
 if recomendaciones_usuario.shape[0] == 0:
-    st.write('Lo sentimos, no hay suficientes películas para hacer una recomendación.')
+    st.write('Lo sentimos, no hay suficientes títulos para hacer una recomendación.')
 else:
     recomendaciones_usuario['Estimate_Score'] = recomendaciones_usuario['movieId'].apply(lambda x: model.predict(usuario_id, x).est)
     recomendaciones_usuario = recomendaciones_usuario[recomendaciones_usuario['Estimate_Score'] >= puntaje_minimo]
     recomendaciones_usuario = recomendaciones_usuario.sort_values('Estimate_Score', ascending=False)
-    st.write('Las películas recomendadas para el usuario son:')
+    st.write('Los títulos recomendados para el usuario son:')
     st.write(recomendaciones_usuario[['title', 'Estimate_Score']].head(20))
