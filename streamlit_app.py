@@ -38,48 +38,101 @@ def get_actor(platform:str, year:int):
     else:
         return ("No actor found with those parameters.")
     
-# Aplicación de Streamlit: # Query 3: Titulos por plataforma
-st.title('Consulta titulos por plataforma')
+# from queries import *
 
-# Formulario para ingresar los parámetros
-platform = st.text_input('Plataforma')
+# Crear un título para la aplicación
+st.title('Consultas de películas y series')
 
-# Botón para realizar la consulta y mostrar los resultados
-if st.button('Consultar'):
-    result = get_count_platform(platform)
-    st.write(f"La cantidad te titulos en la plataforma {platform} es {result}.")
+# Opciones de consulta
+options = ['Duración máxima', 'Títulos por puntuación', 'Títulos por plataforma', 'Actor con más apariciones']
+query = st.sidebar.selectbox('Seleccione una consulta', options)
 
-# Aplicación de Streamlit: # Query 4: Actor con mas apariciones
-st.title('Consulta de actores')
+# Consulta 1: Duración máxima
+if query == 'Duración máxima':
+    st.subheader('Duración máxima por año y plataforma')
+    year = st.number_input('Año', min_value=1900, max_value=2023, value=2022, step=1)
+    platform = st.text_input('Plataforma')
+    duration_type = st.selectbox('Tipo de duración', ['Season', 'Episode'])
+    if st.button('Consultar'):
+        result = get_max_duration(year, platform, duration_type)
+        if isinstance(result, str):
+            st.write(f'La duración máxima de {duration_type.lower()}s en {year} en {platform} es {result}.')
+        else:
+            st.write(result)
 
-# Formulario para ingresar los parámetros
-platform = st.text_input('Plataforma')
-year = st.number_input('Año', value=2022, step=1)
+# Consulta 2: Títulos por puntuación
+if query == 'Títulos por puntuación':
+    st.subheader('Títulos con una puntuación dada en una plataforma y año determinados')
+    platform = st.text_input('Plataforma')
+    scored = st.number_input('Puntuación mínima', min_value=0, max_value=10, value=8, step=0.1)
+    year = st.number_input('Año', min_value=1900, max_value=2023, value=2022, step=1)
+    if st.button('Consultar'):
+        result = get_score_count(platform, scored, year)
+        st.write(f'Hay {result} títulos en {platform} con una puntuación de {scored} o más en {year}.')
 
-# Botón para realizar la consulta y mostrar los resultados
-if st.button('Consultar'):
-    result = get_actor(platform, year)
-    st.write(f"El actor con más apariciones en la plataforma {platform} en el año {year} es {result['actor']} con {result['appearances']} apariciones.")
+# Consulta 3: Títulos por plataforma
+if query == 'Títulos por plataforma':
+    st.subheader('Número de títulos en una plataforma dada')
+    platform = st.text_input('Plataforma')
+    if st.button('Consultar'):
+        result = get_count_platform(platform)
+        st.write(f'Hay {result} títulos en {platform}.')
+
+# Consulta 4: Actor con más apariciones
+if query == 'Actor con más apariciones':
+    st.subheader('Actor con más apariciones en una plataforma y año determinados')
+    platform = st.text_input('Plataforma')
+    year = st.number_input('Año', min_value=1900, max_value=2023, value=2022, step=1)
+    if st.button('Consultar'):
+        result = get_actor(platform, year)
+        if isinstance(result, str):
+            st.write(result)
+        else:
+            st.write(f'El actor con más apariciones en {platform} en {year} es {result["actor"]}, con {result["appearances"]} apariciones.')
+
+    
+# # Aplicación de Streamlit: # Query 3: Titulos por plataforma
+# st.title('Consulta titulos por plataforma')
+
+# # Formulario para ingresar los parámetros
+# platform = st.text_input('Plataforma')
+
+# # Botón para realizar la consulta y mostrar los resultados
+# if st.button('Consultar'):
+#     result = get_count_platform(platform)
+#     st.write(f"La cantidad te titulos en la plataforma {platform} es {result}.")
+
+# # Aplicación de Streamlit: # Query 4: Actor con mas apariciones
+# st.title('Consulta de actores')
+
+# # Formulario para ingresar los parámetros
+# platform = st.text_input('Plataforma')
+# year = st.number_input('Año', value=2022, step=1)
+
+# # Botón para realizar la consulta y mostrar los resultados
+# if st.button('Consultar'):
+#     result = get_actor(platform, year)
+#     st.write(f"El actor con más apariciones en la plataforma {platform} en el año {year} es {result['actor']} con {result['appearances']} apariciones.")
 
 
-# Crear la aplicación de Streamlit
-def app():
-    st.title('Consultas en el catálogo de películas')
-    menu = ['Inicio', 'Máxima duración', 'Puntuación', 'Cantidad de películas', 'Actores']
-    choice = st.sidebar.selectbox('Seleccione una consulta', menu)
+# # Crear la aplicación de Streamlit
+# def app():
+#     st.title('Consultas en el catálogo de películas')
+#     menu = ['Inicio', 'Máxima duración', 'Puntuación', 'Cantidad de películas', 'Actores']
+#     choice = st.sidebar.selectbox('Seleccione una consulta', menu)
 
-    if choice == 'Inicio':
-        st.write('Bienvenido a la aplicación de consultas en el catálogo de películas')
+#     if choice == 'Inicio':
+#         st.write('Bienvenido a la aplicación de consultas en el catálogo de películas')
 
-    elif choice == 'Máxima duración':
-        st.subheader('Película con mayor duración')
-        year = st.number_input('Ingrese el año', min_value=1900, max_value=2025)
-        platform = st.selectbox('Seleccione la plataforma', All['platform'].unique())
-        duration_type = st.selectbox('Seleccione el tipo de duración', All['duration_type'].unique())
-        if st.button('Buscar'):
-            max_duration_title = get_max_duration(year, platform, duration_type)
-            if max_duration_title:
-                st.write(f"La película con mayor duración en {year} en la plataforma {platform} y con duración tipo {duration_type} es {max_duration_title}")
-            else:
-                st.write(f"No se encontró ninguna película con los criterios de búsqueda especificados.")
+#     elif choice == 'Máxima duración':
+#         st.subheader('Película con mayor duración')
+#         year = st.number_input('Ingrese el año', min_value=1900, max_value=2025)
+#         platform = st.selectbox('Seleccione la plataforma', All['platform'].unique())
+#         duration_type = st.selectbox('Seleccione el tipo de duración', All['duration_type'].unique())
+#         if st.button('Buscar'):
+#             max_duration_title = get_max_duration(year, platform, duration_type)
+#             if max_duration_title:
+#                 st.write(f"La película con mayor duración en {year} en la plataforma {platform} y con duración tipo {duration_type} es {max_duration_title}")
+#             else:
+#                 st.write(f"No se encontró ninguna película con los criterios de búsqueda especificados.")
 
