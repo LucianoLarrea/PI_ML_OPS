@@ -2,8 +2,6 @@ import streamlit as st
 import pandas as pd
 import numpy as np
 from fastapi import FastAPI
-# Crear la aplicación
-app = FastAPI()
 
 # Crear un título para la aplicación
 st.title('Mi primera aplicación de Streamlit')
@@ -48,7 +46,7 @@ platform = st.text_input('Plataforma')
 
 # Botón para realizar la consulta y mostrar los resultados
 if st.button('Consultar'):
-    result = get_actor(platform)
+    result = get_count_platform(platform)
     st.write(f"La cantidad te titulos en la plataforma {platform} es {result}.")
 
 # Aplicación de Streamlit: # Query 4: Actor con mas apariciones
