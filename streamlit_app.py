@@ -1,10 +1,9 @@
 import streamlit as st
 import pandas as pd
-import numpy as np
-from fastapi import FastAPI
+from main import *
 
 # Crear un título para la aplicación
-st.title('Mi primera aplicación de Streamlit')
+st.title('Streaming Services')
 
 # Cargar los datos en la app
 All = pd.read_csv("data/all.csv")
@@ -41,20 +40,22 @@ def get_actor(platform:str, year:int):
     else:
         return ({})
     
-# from queries import *
+
 
 # Crear un título para la aplicación
 st.title('Consultas de películas y series')
 
 # Opciones de consulta
-options = ['Duración máxima', 'Títulos por puntuación', 'Títulos por plataforma', 'Actor con más apariciones']
+options = ['Inicio','Duración máxima', 'Títulos por puntuación', 'Títulos por plataforma', 'Actor con más apariciones']
 query = st.sidebar.selectbox('Seleccione una consulta', options)
-plataforma = ['amazon','disney','hulu','netflix']
+
+if query == 'Inicio':
+         st.write('Bienvenido a la aplicación de consultas en el catálogo de películas')
 
 # Consulta 1: Duración máxima
 if query == 'Duración máxima':
     st.subheader('Duración máxima por año y plataforma')
-    year = st.number_input('Año', min_value=2000, max_value=2023, value=2022, step=1)
+    year = st.number_input('Año', min_value=2000, max_value=2023, value=2020, step=1)
     platform = st.selectbox('Seleccione una plataforma', ['amazon','disney','hulu','netflix'])
     duration_type = st.selectbox('Tipo de duración', ['min', 'season'])
     if st.button('Consultar'):
@@ -81,8 +82,8 @@ if query == 'Títulos por plataforma':
     if st.button('Consultar'):
         result = get_count_platform(platform)
         st.write(f'Hay {result} títulos en {platform}.')
-    else: st.write(result)  
-else: st.write(result)  
+
+
 
 # Consulta 4: Actor con más apariciones
 if query == 'Actor con más apariciones':
@@ -95,8 +96,8 @@ if query == 'Actor con más apariciones':
             st.write(result)
         else:
             st.write(f'El actor con más apariciones en {platform} en {year} es {result["actor"]}, con {result["appearances"]} apariciones.')
-    else: st.write(result)  
-else: st.write(result)        
+
+      
 
     
 # # Aplicación de Streamlit: # Query 3: Titulos por plataforma
