@@ -28,8 +28,7 @@ st.write('Sea paciente para la ejecución de las consultas')
 def get_max_duration(year:int, platform:str, duration_type:str): 
     Q1 = All[(All['platform'] == platform) & (All['release_year'] == year) & (All['duration_type'] == duration_type)].sort_values(by = 'duration_int' , ascending=False)
     if len(Q1) > 0:
-        titles_list = Q1['title']   # Observar cuidadosamente que se actualice
-        choosed = st.sidebar.selectbox('Seleccione un titulo (Titulos recomendados)', titles_list) # Prueba
+        # titles_list = Q1['title']   # Observar cuidadosamente que se actualice
         max_duration_title = Q1['title'].values[0]
         return max_duration_title
     else: 
@@ -50,14 +49,17 @@ def get_count_platform(platform:str):
 def get_actor(platform:str, year:int):
     Q4_1 = All[(All['platform'] == platform) & (All['release_year'] == year)]   # Filtra por plataforma y anio
     if len(Q4_1) > 0: 
-        Q4_2 = Q4_1.assign(actor=Q4_1.cast.str.split(',')).explode('cast')          # Divide 'cast', crea y cuenta una fila por cada elemento.
-        Q4_3 = Q4_2.cast.value_counts()  
-        max_actor = Q4_3.index[0]                                                   # Obtiene el actor con más apariciones y número de apariciones
-        max_count = int(Q4_3.iloc[0])
+        Q4_2 = Q4_1.assign(actor=Q4_1.cast.str.split(',')).explode('cast')  # Divide 'cast' por comas
+        Q4_3 = Q4_2.cast.value_counts()         # Crea una lista con actores y apariciones.
+        max_actor = Q4_3.index[0]               # Obtiene el actor con más apariciones
+        max_count = int(Q4_3.iloc[0])           # Obtiene el número de apariciones
+        if max_actor == 'nan':                  # Si los valores nulos son los mas frecuentes
+            max_actor = Q4_3.index[1]           # Obtiene el segundo actor con más apariciones
+            max_count = int(Q4_3.iloc[1])       # Obtiene el número de apariciones correspondiente
         Q4 = dict({'actor': max_actor, 'appearances': max_count})
         return Q4
     else:
-        return ({})
+        return ({'actor': '', 'appearances': 0})
     
 # Query 5: Lista de titulos
 def get_titles(year:int, platform:str, duration_type:str):
@@ -75,6 +77,11 @@ query = st.sidebar.radio('1-Seleccione el tipo de consulta',options)
 # usuario_id = st.sidebar.number_input('ID del usuario (Titulos recomendados)', min_value=1, max_value=270895)
 # choosed = st.sidebar.selectbox('Seleccione un titulo (Titulos recomendados)', titles_list)
 # st.sidebar.button('Recomendar')
+progress_text = "Operación en progreso. Espere por favor."
+my_bar = st.progress(0, text=progress_text)
+for percent_complete in range(100):
+    time.sleep(0.05)
+    my_bar.progress(percent_complete + 1, text=progress_text)
 
 if query == 'A-Inicio':
         st.write('Bienvenido a la aplicación de consultas en el catálogo de servicios de streaming')
@@ -89,9 +96,9 @@ if query == 'B-Duración máxima':
     if st.sidebar.button('Consultar'):
         result = get_max_duration(year, platform, duration_type)
         if isinstance(result, str):
-            st.write(f'La duración máxima en {duration_type.lower()}s para {year} en {platform} es: {result}.')
+            st.subheader(f'La duración máxima en {duration_type.lower()}s para {year} en {platform} es: {result}.')
         else:
-            st.write(result)
+            st.subheader(result)
 
 # Consulta 2: Títulos por puntuación
 if query == 'C-Títulos por puntuación':
@@ -101,7 +108,7 @@ if query == 'C-Títulos por puntuación':
     year = st.sidebar.number_input('4-Año', min_value=1920, max_value=2023, value=2020, step=1)
     if st.sidebar.button('Consultar'):
         result = get_score_count(platform, scored, year)
-        st.write(f'Hay {result} títulos en {platform} con una puntuación de {scored} o más en {year}.')
+        st.subheader(f'Hay {result} títulos en {platform} con una puntuación de {scored} o más en {year}.')
 
 # Consulta 3: Títulos por plataforma
 if query == 'D-Títulos por plataforma':
@@ -109,21 +116,21 @@ if query == 'D-Títulos por plataforma':
     platform = st.sidebar.selectbox('2-Seleccione una plataforma', ['amazon','disney','hulu','netflix'])
     if st.sidebar.button('Consultar'):
         result = get_count_platform(platform)
-        st.write(f'Hay {result} títulos en {platform}.')
+        st.subheader(f'Hay {result} títulos en {platform}.')
 
 
 
 # Consulta 4: Actor con más apariciones
 if query == 'E-Actor con más apariciones':
-    st.subheader('Actor con más apariciones en una plataforma y año determinados')
+    st.subheader('Actor con más apariciones por plataforma y año')
     platform = st.sidebar.selectbox('2-Seleccione una plataforma', ['amazon','disney','hulu','netflix'])
     year = st.sidebar.number_input('3-Año', min_value=1920, max_value=2022, value=2020, step=1)
     if st.sidebar.button('Consultar'):
         result = get_actor(platform, year)
         if isinstance(result, str):
-            st.write(result)
+            st.subheader(result)
         else:
-            st.write(f'El/los actor/es con más apariciones en {platform} en {year} es {result["actor"].title()}, con {result["appearances"]} apariciones.')
+            st.subheader(f'El/los actor/es con más apariciones en {platform} en {year} : {result["actor"].title()}, con {result["appearances"]} apariciones.')
 
 # Consulta 5: Titulos recomendados
 if query == 'F-Titulos recomendados':
@@ -174,11 +181,7 @@ if query == 'F-Titulos recomendados':
             st.write('Otros títulos recomendados que el usuario',usuario_id, 'no ha visto.')
             st.dataframe(recomendaciones_usuario)
 
-progress_text = "Operación en progreso. Espere por favor."
-my_bar = st.progress(0, text=progress_text)
-for percent_complete in range(100):
-    time.sleep(0.05)
-    my_bar.progress(percent_complete + 1, text=progress_text)
+
 
 with st.spinner('Solo un poco mas...'):
     time.sleep(1)
