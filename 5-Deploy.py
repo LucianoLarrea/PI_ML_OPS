@@ -11,7 +11,9 @@ from surprise.model_selection import train_test_split
 #     model = pickle.load(file)
 
 # Crear un título para la aplicación
-st.title('Streaming Services')
+st.set_page_config(page_title='Streaming Services') # Nombre para configurar la pagina web
+st.header('Consultas de títulos de películas y series') # Titulo de la pagina
+st.subheader('Sistema de consultas')
 # Cargar datos para consultas
 All = pd.read_csv("data/all.csv")
 Score = pd.read_parquet('data/score.parquet')
@@ -22,6 +24,7 @@ titles_list = All['title'].values
 def get_max_duration(year:int, platform:str, duration_type:str): 
     Q1 = All[(All['platform'] == platform) & (All['release_year'] == year) & (All['duration_type'] == duration_type)].sort_values(by = 'duration_int' , ascending=False)
     if len(Q1) > 0:
+        titles_list = Q1['title']   # Observar cuidadosamente que se actualice
         max_duration_title = Q1['title'].values[0]
         return max_duration_title
     else: 
@@ -61,14 +64,13 @@ def get_titles(year:int, platform:str, duration_type:str):
     #     return ("Not titles found with those parameters.")
 
 
-# Crear un título para la aplicación
-st.title('Consultas de películas y series')
+
 
 # Opciones de consulta
 options = ['Inicio','Duración máxima', 'Títulos por puntuación', 'Títulos por plataforma', 'Actor con más apariciones','Titulos recomendados']
 query = st.sidebar.selectbox('Seleccione una consulta', options)
-usuario_id = st.sidebar.number_input('ID del usuario', min_value=1, max_value=270895)
-choosed = st.sidebar.selectbox('Seleccione un titulo', titles_list)
+usuario_id = st.sidebar.number_input('ID del usuario (Titulos recomendados)', min_value=1, max_value=270895)
+choosed = st.sidebar.selectbox('Seleccione un titulo (Titulos recomendados)', titles_list)
 # st.sidebar.button('Recomendar')
 
 if query == 'Inicio':
@@ -155,4 +157,13 @@ if st.sidebar.button('Recomendar'):
     prediction = model.predict(usuario_id, movieId)
     recomendacion = int(prediction.est * 20)
     # Mostrar la predicción en Streamlit
-    st.write('Este título es', recomendacion,'% para ti')
+    st.sidebar.write('Este título es', recomendacion,'% para el usuario,',usuario_id)
+    
+    # Agrega un dataframe adicional con las puntuaciones de usuario
+    recomendaciones_usuario = df_title[['movieId','title']] # Todos los titulos
+    # Debemos extraer las películas que ya ha visto
+    usuario_vistas = df1[df1['userId'] == usuario_id] # Filtro por peliculas que el usuario califico
+    recomendaciones_usuario.drop(usuario_vistas.movieId, inplace = True,  errors='ignore') # Elimina las peliculas vistas
+    recomendaciones_usuario['Estimate_Score'] = recomendaciones_usuario['movieId'].apply(lambda x: model.predict(usuario_id, x).est)
+    recomendaciones_usuario = recomendaciones_usuario.sort_values('Estimate_Score', ascending=False)
+    st.dataframe(recomendaciones_usuario)
