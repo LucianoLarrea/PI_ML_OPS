@@ -32,7 +32,7 @@ async def get_max_duration(year:int, platform:str, duration_type:str):
     
 # Funcion Query 2
 @app.get('/score_count/{platform}/{scored}/{year}')
-async def get_score_count(platform:str, scored:int, year:int):
+async def get_score_count(platform:str, scored:float, year:int):
     # All = pd.read_csv("data/all.csv")
     All = pd.read_parquet('processed_data/titles.parquet')
     # Score = pd.read_parquet('data/score.parquet')
