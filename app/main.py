@@ -9,9 +9,9 @@ tracemalloc.start()
 
 app = FastAPI()
 
-year = 2019
-platform = 'disney'
-duration_type = 'min'
+# year = 2019
+# platform = 'disney'
+# duration_type = 'min'
 
 @app.get('/')
 async def index():
@@ -20,7 +20,7 @@ async def index():
 # Fucion Query 1
 @app.get('/max_duration/{year}/{platform}/{duration_type}')
 async def get_max_duration(year:int, platform:str, duration_type:str): 
-    All = pd.read_csv("../data/all.csv")
+    All = pd.read_csv("data/all.csv")
     # All = pd.read_parquet('processed_data/titles.parquet')
     Q1 = All[(All['platform'] == platform) & (All['release_year'] == year) & (All['duration_type'] == duration_type)].sort_values(by = 'duration_int' , ascending=False)
     max_duration_title = Q1['title'].values[0]
@@ -31,7 +31,7 @@ async def get_max_duration(year:int, platform:str, duration_type:str):
 # Funcion Query 2
 @app.get('/score_count/{platform}/{scored}/{year}')
 async def get_score_count(platform:str, scored:float, year:int):
-    All = pd.read_csv("./data/all.csv")
+    All = pd.read_csv("data/all.csv")
     # All = pd.read_parquet('processed_data/titles.parquet')
     # Score = pd.read_parquet('processed_data/score.parquet')
     result = All[(All['platform'] == platform) & (All['score'] >= scored) & (All['release_year'] == year)].shape[0]
@@ -51,8 +51,8 @@ async def get_count_platform(platform:str):
 # Funcion Query 4
 @app.get('/get_actor/{platform}/{year}')
 async def get_actor(platform:str, year:int):
-    # All = pd.read_csv("../data/all.csv")
-    All = pd.read_parquet('processed_data/titles.parquet')
+    All = pd.read_csv("data/all.csv")
+    # All = pd.read_parquet('processed_data/titles.parquet')
     Q4_1 = All[(All['platform'] == platform) & (All['release_year'] == year)]   # Filtra por plataforma y anio
     if len(Q4_1) > 0: 
         Q4_2 = Q4_1.assign(actor=Q4_1.cast.str.split(',')).explode('cast')  # Divide 'cast' por comas
