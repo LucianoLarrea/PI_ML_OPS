@@ -162,9 +162,10 @@ if query == 'Títulos recomendados':
 
         
         # Cargar datos para el sistema de recomendacion
-            df1 = pd.read_parquet(('data/merge.parquet'))
-            df_title = pd.read_csv('data/df_title.csv')
-
+            # df1 = pd.read_parquet(('data/merge.parquet'))
+            # df_title = pd.read_csv('data/df_title.csv')
+            df1 = pd.read_parquet('processed_data/all.parquet')
+            df_title = pd.read_parquet('processed_data/title.parquet')
             # Configurar modelo de recomendación
             reader = Reader()
             N_filas = 10000 # Limitamos el dataset a N_filas
@@ -184,14 +185,19 @@ if query == 'Títulos recomendados':
             prediction = model.predict(usuario_id, movieId)
             recomendacion = int(prediction.est * 20)
             # Mostrar la predicción en Streamlit
-            st.write('Este título es', recomendacion,'% compatible para el usuario,',usuario_id)
+            st.write('Este título es', recomendacion,'% compatible para el usuario',usuario_id)
             
             # Agrega un dataframe adicional con las puntuaciones de usuario
-            recomendaciones_usuario = df_title[['movieId','title']] # Todos los titulos
+            # recomendaciones_usuario = df_title[['movieId','title']]# Todos los titulos
+            recomendaciones_usuario = df_title.set_index(['movieId']) 
+            
+            
             # Debemos extraer las películas que ya ha visto
             usuario_vistas = df1[df1['userId'] == usuario_id] # Filtro por peliculas que el usuario califico
             recomendaciones_usuario.drop(usuario_vistas.movieId, inplace = True,  errors='ignore') # Elimina las peliculas vistas
+            recomendaciones_usuario = recomendaciones_usuario.reset_index() # Resetea los indices
             recomendaciones_usuario['Estimate_Score'] = recomendaciones_usuario['movieId'].apply(lambda x: model.predict(usuario_id, x).est)
+            
             recomendaciones_usuario = recomendaciones_usuario.sort_values('Estimate_Score', ascending=False)
             st.write('Otros títulos recomendados para el usuario',usuario_id, 'que aun no ha visto.')
             st.dataframe(recomendaciones_usuario)
