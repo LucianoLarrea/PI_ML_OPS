@@ -88,7 +88,7 @@ if query == 'Inicio':
 # Consulta 1: Duración máxima
 if query == 'Duración máxima':
     st.subheader('Duración máxima por año y plataforma')
-    year = st.sidebar.number_input('2-Año', min_value=1920, max_value=2023, value=2020, step=1)
+    year = st.sidebar.number_input('2-Año', min_value=1920, max_value=2023, value=2019, step=1)
     platform = st.sidebar.selectbox('3-Seleccione una plataforma', ['amazon','disney','hulu','netflix'])
     duration_type = st.sidebar.selectbox('4-Tipo de duración', ['min', 'season'])
     if st.sidebar.button('Consultar'):
@@ -103,7 +103,7 @@ if query == 'Títulos por puntuación':
     st.subheader('Títulos con una puntuación dada en una plataforma y año determinados')
     platform = st.sidebar.selectbox('2-Seleccione una plataforma', ['amazon','disney','hulu','netflix'])
     scored = st.sidebar.number_input('3-Puntuación mínima', min_value=1.0, max_value=5.0, value=3.5, step=0.5)
-    year = st.sidebar.number_input('4-Año', min_value=1920, max_value=2023, value=2020, step=1)
+    year = st.sidebar.number_input('4-Año', min_value=1920, max_value=2023, value=2019, step=1)
     if st.sidebar.button('Consultar'):
         result = get_score_count(platform, scored, year)
         st.subheader(f'Hay {result} títulos en {platform} con una puntuación de {scored} o más en {year}.')
@@ -122,7 +122,7 @@ if query == 'Títulos por plataforma':
 if query == 'Actor con más apariciones':
     st.subheader('Actor con más apariciones por plataforma y año')
     platform = st.sidebar.selectbox('2-Seleccione una plataforma', ['amazon','disney','hulu','netflix'])
-    year = st.sidebar.number_input('3-Año', min_value=1920, max_value=2022, value=2020, step=1)
+    year = st.sidebar.number_input('3-Año', min_value=1920, max_value=2022, value=2019, step=1)
     if st.sidebar.button('Consultar'):
         result = get_actor(platform, year)
         if isinstance(result, str):
@@ -133,7 +133,7 @@ if query == 'Actor con más apariciones':
 # Consulta 5: Titulos recomendados
 if query == 'Títulos recomendados':
     st.subheader('Lista de títulos')
-    year = st.sidebar.number_input('2-Año', min_value=1920, max_value=2023, value=2020, step=1)
+    year = st.sidebar.number_input('2-Año', min_value=1920, max_value=2023, value=2019, step=1)
     platform = st.sidebar.selectbox('3-Seleccione una plataforma', ['amazon','disney','hulu','netflix'])
     duration_type = st.sidebar.selectbox('4-Tipo de duración', ['min', 'season'])
     with st.expander("5-Consultar"):
