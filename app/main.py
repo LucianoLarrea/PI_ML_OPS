@@ -15,7 +15,7 @@ duration_type = 'min'
 
 @app.get('/')
 async def index():
-    return {'Hola' : 'Mundo'}
+    return {'Hola' : 'app/main.py'}
 
 # Fucion Query 1
 @app.get('/max_duration/{year}/{platform}/{duration_type}')
@@ -31,7 +31,7 @@ async def get_max_duration(year:int, platform:str, duration_type:str):
 # Funcion Query 2
 @app.get('/score_count/{platform}/{scored}/{year}')
 async def get_score_count(platform:str, scored:float, year:int):
-    All = pd.read_csv("../data/all.csv")
+    All = pd.read_csv("./data/all.csv")
     # All = pd.read_parquet('processed_data/titles.parquet')
     # Score = pd.read_parquet('processed_data/score.parquet')
     result = All[(All['platform'] == platform) & (All['score'] >= scored) & (All['release_year'] == year)].shape[0]
@@ -40,19 +40,19 @@ async def get_score_count(platform:str, scored:float, year:int):
 # Fucnion Query 3
 @app.get('/count_platform/{platform}')
 async def get_count_platform(platform:str):
-    All = pd.read_csv("../data/all.csv")
+    All = pd.read_csv("data/all.csv")
     # All = pd.read_parquet('processed_data/titles.parquet')
     All = All.loc[All['platform'] == platform]
     movies_platform = len(All.index)
     return movies_platform
 
-get_count_platform('amazon')
+# get_count_platform('amazon')
 
 # Funcion Query 4
 @app.get('/get_actor/{platform}/{year}')
 async def get_actor(platform:str, year:int):
-    All = pd.read_csv("../data/all.csv")
-    # All = pd.read_parquet('processed_data/titles.parquet')
+    # All = pd.read_csv("../data/all.csv")
+    All = pd.read_parquet('processed_data/titles.parquet')
     Q4_1 = All[(All['platform'] == platform) & (All['release_year'] == year)]   # Filtra por plataforma y anio
     if len(Q4_1) > 0: 
         Q4_2 = Q4_1.assign(actor=Q4_1.cast.str.split(',')).explode('cast')  # Divide 'cast' por comas
@@ -67,4 +67,4 @@ async def get_actor(platform:str, year:int):
     else:
         return ("No actor found with those parameters.")
     
-get_actor('disney', 2020)
+# get_actor('disney', 2020)

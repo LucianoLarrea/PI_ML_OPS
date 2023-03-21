@@ -49,7 +49,7 @@ async def get_count_platform(platform:str):
     movies_platform = len(All.index)
     return movies_platform
 
-# get_count_platform('amazon')
+get_count_platform('amazon')
 
 # Funcion Query 4
 @app.get('/get_actor/{platform}/{year}')
