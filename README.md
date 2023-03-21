@@ -60,7 +60,7 @@ Una vez finalizado el **ETL** y el **EDA**, se debe entreno un modelo de ML para
 
 ## Deployment de la aplicacion:
 El deployment de las cuantro consultas y el sistema de recomendacion se encuentra en el archivo **5-Deploy.py**, para esto se utilizo Streamlit: 
-🔹 https://lucianolarrea-pi-ml-ops-streamlit-app-yive5o.streamlit.app/
+🔹 https://lucianolarrea-pi-ml-ops-4-ml-streamlit-1jg5jc.streamlit.app/
 <img src='src/Deploy.png' >
 </p> 
 

@@ -15,8 +15,10 @@ st.set_page_config(page_title='Streaming Services') # Nombre para configurar la 
 st.header('Consultas de títulos de streaming') # Titulo de la pagina
 
 # Cargar datos para consultas
-All = pd.read_csv("data/all.csv")
-Score = pd.read_parquet('data/score.parquet')
+# All = pd.read_csv("data/all.csv")
+# Score = pd.read_parquet('data/score.parquet')
+All = pd.read_parquet('processed_data/titles.parquet')
+Score = pd.read_parquet('processed_data/score.parquet')
 titles_list = All['title'].values
 
 st.write('Sea paciente para la ejecución de las consultas')
@@ -45,19 +47,34 @@ def get_count_platform(platform:str):
     return movies_platform
 # Query 4: Actor con mas apariciones
 def get_actor(platform:str, year:int):
+    Not_found = 'No se encontraron resultados para la busqueda solicitada'
     Q4_1 = All[(All['platform'] == platform) & (All['release_year'] == year)]   # Filtra por plataforma y anio
-    if len(Q4_1) > 0: 
+    if len(Q4_1) == 0:                              # Si no hay valores para esos filtros: No encontrado
+        return(Not_found)
+    else:    
         Q4_2 = Q4_1.assign(actor=Q4_1.cast.str.split(',')).explode('cast')  # Divide 'cast' por comas
-        Q4_3 = Q4_2.cast.value_counts()         # Crea una lista con actores y apariciones.
-        max_actor = Q4_3.index[0]               # Obtiene el actor con más apariciones
-        max_count = int(Q4_3.iloc[0])           # Obtiene el número de apariciones
-        if max_actor == 'nan':                  # Si los valores nulos son los mas frecuentes
-            max_actor = Q4_3.index[1]           # Obtiene el segundo actor con más apariciones
-            max_count = int(Q4_3.iloc[1])       # Obtiene el número de apariciones correspondiente
-        Q4 = dict({'actor': max_actor, 'appearances': max_count})
-        return Q4
-    else:
-        return ({'actor': '', 'appearances': 0})
+        mask = Q4_2['actor'].isna()                 # Filtra los valores nulos
+        Q4_3 = Q4_2.loc[mask, 'actor']
+        if len(Q4_3) == 0:                          # Si no hay valores luego de filtrar nulos: No encontrado
+            return(Not_found)
+        else:
+            Q4_4 = Q4_3.cast.value_counts()         # Crea una lista con actores y apariciones.
+            max_actor = Q4_4.index[0]               # Obtiene el actor con más apariciones
+            max_count = int(Q4_4.iloc[0])           # Obtiene el número de apariciones
+            Q5 = dict({'actor': max_actor, 'appearances': max_count})
+            return(Q5)
+    # if len(Q4_1) > 0: 
+    #     Q4_2 = Q4_1.assign(actor=Q4_1.cast.str.split(',')).explode('cast')  # Divide 'cast' por comas
+    #     Q4_3 = Q4_2.cast.value_counts()         # Crea una lista con actores y apariciones.
+    #     max_actor = Q4_3.index[0]               # Obtiene el actor con más apariciones
+    #     max_count = int(Q4_3.iloc[0])           # Obtiene el número de apariciones
+    #     if max_actor == 'nan':                  # Si los valores nulos son los mas frecuentes
+    #         max_actor = Q4_3.index[1]           # Obtiene el segundo actor con más apariciones
+    #         max_count = int(Q4_3.iloc[1])       # Obtiene el número de apariciones correspondiente
+    #     Q4 = dict({'actor': max_actor, 'appearances': max_count})
+    #     return Q4
+    # else:
+    #     return ({'actor': '', 'appearances': 0})
     
 # Query 5: Lista de titulos
 def get_titles(year:int, platform:str, duration_type:str):
@@ -93,7 +110,7 @@ if query == 'Duración máxima':
     duration_type = st.sidebar.selectbox('4-Tipo de duración', ['min', 'season'])
     if st.sidebar.button('Consultar'):
         result = get_max_duration(year, platform, duration_type)
-        if isinstance(result, str):
+        if isinstance(result, str):         # Si es string, muestra el string
             st.subheader(f'La duración máxima en {duration_type.lower()}s para {year} en {platform} es: {result}.')
         else:
             st.subheader(result)
@@ -125,7 +142,7 @@ if query == 'Actor con más apariciones':
     year = st.sidebar.number_input('3-Año', min_value=1920, max_value=2022, value=2019, step=1)
     if st.sidebar.button('Consultar'):
         result = get_actor(platform, year)
-        if isinstance(result, str):
+        if isinstance(result, str):     # Si es string, muestra el string
             st.subheader(result)
         else:
             st.subheader(f'El/los actor/es con más apariciones en {platform} en {year} : {result["actor"].title()}, con {result["appearances"]} apariciones.')
