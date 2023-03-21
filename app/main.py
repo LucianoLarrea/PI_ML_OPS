@@ -3,6 +3,7 @@
 import numpy as np
 import pandas as pd
 from fastapi import FastAPI
+import pyarrow
 # import asyncio
 import tracemalloc
 tracemalloc.start()
@@ -29,7 +30,7 @@ async def get_max_duration(year:int, platform:str, duration_type:str):
 async def get_score_count(platform:str, scored:float, year:int):
     # All = pd.read_csv("data/all.csv")
     All = pd.read_parquet('processed_data/titles.parquet')
-    Score = pd.read_parquet('data/score.parquet')
+    Score = pd.read_parquet('processed_data/score.parquet')
     result = Score[(Score['platform'] == platform) & (Score['score'] >= scored) & (All['release_year'] == year)].shape[0]
     return result
 
